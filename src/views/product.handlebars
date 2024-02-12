@@ -1,0 +1,31 @@
+<a href="/products">Volver</a>
+<h1>{{title}}</h1>
+
+<p>{{description}}</p>
+
+{{#if photo}}
+{{#each photo}}
+<center><img src="/images/products/{{this}}" /></center>
+{{/each}}
+{{/if}}
+
+{{#if isStock}}
+<p>Precio: {{price}}</p>
+{{else}}
+<p>No hay stock del producto</p>
+{{/if}}
+
+
+<h1>Actualizar producto</h1>
+
+<form id="updateForm">
+    <label for="editDescription">Nueva Descripción:</label><br>
+    <input type="text" id="editDescription" name="description"><br>
+    <label for="editPrice">Nuevo Precio:</label><br>
+    <input type="text" id="editPrice" name="price"><br>
+    <label for="editStock">Nuevo Stock:</label><br>
+    <input type="text" id="editStock" name="stock"><br>
+    <button type="submit">Guardar Cambios</button>
+</form>
+
+<script src="/js/product.js"></script>

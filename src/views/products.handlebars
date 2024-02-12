@@ -1,0 +1,25 @@
+<ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/products?stock">Ver unicamente productos con stock</a></li>
+    <li><a href="/products/new">Añadir nuevo producto</a></li>
+</ul>
+
+
+<ul>
+    {{#if products.length}}
+    <h1>productos:</h1>
+    {{#each products}}
+    <li><a href="/products/{{this._id}}">{{this.title}}</a></li>
+    <li><a href="/products/update/{{this._id}}">Actualizar producto</a></li>
+    <br><br>
+    {{/each}}
+    {{else}}
+    <h1>No tienes productos</h1>
+    {{/if}}
+</ul>
+
+{{#if productAdded}}
+<div class="success-message">
+    <h1> Se agrego el producto: {{productTitle}}</h1>
+</div>
+{{/if}}
