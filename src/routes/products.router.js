@@ -26,7 +26,6 @@ productsRouter.get("/", async (req, res) => {
         let productTitle = req.query.productTitle;
 
 
-
         res.render("products", { products, productAdded, productTitle });
 
     } catch (error) {
@@ -42,7 +41,6 @@ productsRouter.get("/new", (req, res) => {
 })
 
 productsRouter.get("/:id", async (req, res) => {
-
     try {
 
         let id = req.params.id
@@ -58,12 +56,15 @@ productsRouter.get("/:id", async (req, res) => {
         }
 
         res.render("product", {
+            id: product._id,
             title: product.title,
             description: product.description,
             photo: product.photo,
             price: product.price,
             isStock: product.stock > 0
         });
+
+
 
     } catch (error) {
         console.log("Hubo un problema en el servidor", error)
@@ -90,10 +91,7 @@ productsRouter.post("/", upload.array('image', 5), async (req, res) => {
             return res.redirect("/products");
         }
 
-
         await ProductsDAO.add(product.title, product.description, product.price, product.stock, filenames);
-
-
 
         res.redirect(`/products?productAdded=true&productTitle=${encodeURIComponent(product.title)}`);
 
@@ -104,30 +102,29 @@ productsRouter.post("/", upload.array('image', 5), async (req, res) => {
 })
 
 //actualizar
-/* productsRouter.put("/update/:id", async (req, res) => {
+productsRouter.post("/update/:id", async (req, res) => {
+
     try {
         const id = req.params.id;
+
         const { title, description, price, stock, photo } = req.body;
 
-        if (!title && !description && !price && !stock && !photo) {
-            console.log("Debe proporcionar al menos un campo para actualizar");
-            return res.redirect(`/products/${id}`);
-        }
+        console.log(req.body)
 
         await ProductsDAO.update(id, { title, description, price, stock, photo });
 
         res.redirect(`/products/${id}`);
 
-        res.redirect(`/products?productUpdated=true&updatedProductTitle=${encodeURIComponent(updatedProduct.title)}`);
 
     } catch (error) {
         console.error("Hubo un problema al actualizar el producto:", error);
         res.render("500");
     }
-}); */
+});
 
 
-productsRouter.delete("/:id", async (req, res) => {
+//borrar
+productsRouter.get("/delete/:id", async (req, res) => {
     try {
         const id = req.params.id;
 
@@ -138,13 +135,14 @@ productsRouter.delete("/:id", async (req, res) => {
             return res.status(404).send("Producto no encontrado");
         }
 
-        res.sendStatus(204); // No Content
+        res.render("delete-product")
+
     } catch (error) {
         console.error("Hubo un problema al eliminar el producto:", error);
         res.status(500).send("Hubo un problema al eliminar el producto");
     }
 });
 
-//borrar
+
 
 export { productsRouter }

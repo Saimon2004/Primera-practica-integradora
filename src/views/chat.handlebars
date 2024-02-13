@@ -1,0 +1,81 @@
+<div class="caja">
+    <a href="/">volver</a>
+    <h1>chat en vivo</h1>
+
+</div>
+
+<button id="deleteButton">Borrar Chat</button>
+
+<form id="chatForm">
+    <!-- Añadir un div para el campo de usuario -->
+    <div id="userInputContainer">
+        <input type="text" id="user" placeholder="Tu nombre">
+    </div>
+    <input type="text" id="message" placeholder="Escribe tu mensaje">
+    <button type="submit">Enviar</button>
+</form>
+<br>
+<div id="errorMessage" style="color: red;"></div>
+<br><br>
+<div id="chatMessages"></div>
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    const socket = io();
+
+    // Manejar el envío de mensajes desde el formulario
+    document.getElementById("chatForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const user = document.getElementById("user").value;
+        const message = document.getElementById("message").value;
+
+        if (user && message) {
+
+            socket.emit("chatMessage", { user, message });
+
+            document.getElementById("message").value = "";
+
+            const errorMessage = document.getElementById("errorMessage");
+            errorMessage.textContent = "";
+
+            document.getElementById("userInputContainer").style.display = "none";
+
+        } else {
+            const errorMessage = document.getElementById("errorMessage");
+            errorMessage.textContent = "Por favor, completa todos los campos.";
+        }
+    });
+
+    socket.on("previousMessages", (messages) => {
+
+        const chatMessages = document.getElementById("chatMessages");
+        chatMessages.innerHTML = "";
+
+        messages.forEach((message) => {
+            const messageElement = document.createElement("div");
+            messageElement.classList.add("mensajes")
+            messageElement.innerHTML = `<strong>${message.user}:</strong> ${message.message}`;
+            chatMessages.appendChild(messageElement);
+        });
+    });
+
+    // Escuchar mensajes del servidor y mostrarlos en la interfaz de usuario
+    socket.on("messageReceived", (data) => {
+        const { user, message } = data;
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("mensajes")
+        messageElement.innerHTML = `<strong>${user}:</strong> ${message}`;
+        document.getElementById("chatMessages").appendChild(messageElement);
+    });
+
+    //Borrar mensajes
+    document.getElementById("deleteButton").addEventListener("click", () => {
+        socket.emit("deleteMessages");
+
+        const mensajes = document.getElementById("chatMessages")
+        mensajes.innerHTML = ''
+    });
+</script>

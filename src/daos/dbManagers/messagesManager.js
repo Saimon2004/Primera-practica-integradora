@@ -1,32 +1,37 @@
 import { messagesModel } from "../models/messageModel.js"
 
-class MessageDAO {
+export class MessageDAO {
 
-    static async getAll() { //
-        return messagesModel.find().lean()
+    static getMessages = async () => {
+        try {
+            return await messagesModel.find().lean();
+        } catch (error) {
+            return error;
+        }
     }
 
-    static async getAllWithStock() {
-        return messagesModel.find({ stock: { $gt: 0 } }).lean()
+    static createMessage = async (message) => {
+        if (message.user.trim() === '' || message.message.trim() === '') {
+
+            return null;
+        }
+
+        try {
+            return await messagesModel.create(message);
+        } catch (error) {
+            return error;
+        }
     }
 
-    static async getById(id) {
-        return messagesModel.findOne({ _id: id }).lean()
+    static deleteAllMessages = async () => {
+        try {
+            console.log("Deleting all messages...");
+            const result = await messagesModel.deleteMany({});
+            console.log("Messages deleted:", result);
+            return result;
+        } catch (error) {
+            console.error("Error deleting messages:", error);
+            return error;
+        }
     }
-
-    static async add(title, description, price, stock, photo) {
-        return new messagesModel({ title, description, price, stock, photo }).save()
-    }
-
-    static async update(id, data) {
-        return messagesModel.findOneAndUpdate({ _id: id }, data)
-    }
-
-    static async remove(id) {
-        return messagesModel.findOneAndDelete({ id }).lean()
-    }
-
 }
-
-
-export default MessageDAO;

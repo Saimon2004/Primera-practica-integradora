@@ -10,7 +10,7 @@
     <h1>productos:</h1>
     {{#each products}}
     <li><a href="/products/{{this._id}}">{{this.title}}</a></li>
-    <li><a href="/products/update/{{this._id}}">Actualizar producto</a></li>
+    <li><a href="/products/delete/{{this._id}}">Eliminar</a></li>
     <br><br>
     {{/each}}
     {{else}}
