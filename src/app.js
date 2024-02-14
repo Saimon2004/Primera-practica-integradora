@@ -22,8 +22,6 @@ app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', './views');
 
-
-app.use(express.static("public"))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -37,10 +35,8 @@ socketServer.on("connection", async (socket) => {
     console.log("usuario conectado con id: " + socket.id);
 
     try {
-        // Obtener los mensajes anteriores
         const messages = await MessageDAO.getMessages();
 
-        // Enviar los mensajes anteriores al nuevo usuario
         socket.emit("previousMessages", messages);
     } catch (error) {
         console.error("Error al obtener mensajes anteriores:", error);
@@ -49,10 +45,8 @@ socketServer.on("connection", async (socket) => {
 
     socket.on("chatMessage", async (data) => {
         try {
-            // Crear un nuevo mensaje
             await MessageDAO.createMessage(data);
 
-            // Emitir el mensaje recibido a todos los usuarios conectados
             socketServer.emit("messageReceived", data);
         } catch (error) {
             console.error("Error al crear mensaje:", error);

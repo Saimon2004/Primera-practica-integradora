@@ -19,12 +19,56 @@
 <h1>Actualizar producto</h1>
 
 <div class="new">
-    <form class="formulario" action="/products/update/{{id}}" method="POST" enctype="multipart/form-data">
+    <form class="formulario" action="/products/update/{{id}}" method="POST" id="form">
         <input type="text" name="title" placeholder="Titulo">
-        <input name="description" placeholder="Descripción ">
+        <input type="text" name="description" placeholder="Descripción ">
         <input type="number" name="price" placeholder="Precio ">
         <input type="number" name="stock" placeholder="Stock ">
         <input type="submit" value="Actualizar producto" />
     </form>
 </div>
-{{!-- El id si lo recibe en action --}}
+
+<div id="messageError"></div>
+
+<script>
+    const form = document.getElementById("form");
+
+    form.onsubmit = (e) => {
+        e.preventDefault();
+        const formData = Object.fromEntries(new FormData(e.currentTarget).entries());
+
+        let parsePrice = parseInt(formData.price)
+        let parseStock = parseInt(formData.stock)
+
+        if (!formData.title && !formData.description && !parsePrice && !parseStock) {
+
+            let messageError = document.getElementById("messageError")
+            return messageError.innerHTML = "<p>llene al menos un formulario</p>"
+        }
+
+        if
+
+        if (parsePrice < 0) {
+                let messageError = document.getElementById("messageError")
+                return messageError.innerHTML = "<p>Precio inválido: debe ser un número positivo</p>";
+            }
+        if (parseStock < 0) {
+            let messageError = document.getElementById("messageError")
+            return messageError.innerHTML = ("<p>Stock inválido: debe ser un número positivo</p>");
+        }
+
+
+        fetch(form.action, {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            method: "PUT",
+            body: JSON.stringify(formData)
+        })
+            .then((res) => {
+                if (res.status < 400) {
+                    window.location.reload();
+                }
+            })
+    }
+</script>

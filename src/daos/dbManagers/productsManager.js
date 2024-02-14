@@ -34,7 +34,7 @@ class ProductsDAO {
         }
     }
 
-    //actualizar
+
     static async update(id, data) {
         try {
             return await productsModel.findOneAndUpdate({ _id: id }, data);

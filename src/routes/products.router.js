@@ -11,7 +11,7 @@ productsRouter.get("/", async (req, res) => {
 
     try {
 
-        let withStock = req.body.stock;
+        let withStock = req.query.stock;
 
         let products;
 
@@ -21,7 +21,7 @@ productsRouter.get("/", async (req, res) => {
             products = await ProductsDAO.getAllWithStock()
         }
 
-        //anadir producto
+
         let productAdded = req.query.productAdded === 'true';
         let productTitle = req.query.productTitle;
 
@@ -49,7 +49,7 @@ productsRouter.get("/:id", async (req, res) => {
             res.redirect("/products/");
         }
 
-        let product = await ProductsDAO.getById(id)
+        let product = await ProductsDAO.getById(id);
 
         if (!product) {
             res.render("404");
@@ -61,10 +61,10 @@ productsRouter.get("/:id", async (req, res) => {
             description: product.description,
             photo: product.photo,
             price: product.price,
-            isStock: product.stock > 0
+            isStock: product.stock > 0,
+            style: "/css/product.css"
+
         });
-
-
 
     } catch (error) {
         console.log("Hubo un problema en el servidor", error)
@@ -101,20 +101,23 @@ productsRouter.post("/", upload.array('image', 5), async (req, res) => {
     }
 })
 
-//actualizar
-productsRouter.post("/update/:id", async (req, res) => {
+
+productsRouter.put("/update/:id", async (req, res) => {
 
     try {
         const id = req.params.id;
 
-        const { title, description, price, stock, photo } = req.body;
+        const fieldsToUpdate = {};
+        Object.keys(req.body).forEach(key => {
+            const value = req.body[key];
+            if (value !== '' && value !== null && value !== undefined) {
+                fieldsToUpdate[key] = value;
+            }
+        });
 
-        console.log(req.body)
-
-        await ProductsDAO.update(id, { title, description, price, stock, photo });
+        await ProductsDAO.update(id, fieldsToUpdate);
 
         res.redirect(`/products/${id}`);
-
 
     } catch (error) {
         console.error("Hubo un problema al actualizar el producto:", error);
@@ -123,7 +126,7 @@ productsRouter.post("/update/:id", async (req, res) => {
 });
 
 
-//borrar
+
 productsRouter.get("/delete/:id", async (req, res) => {
     try {
         const id = req.params.id;

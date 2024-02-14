@@ -26,7 +26,6 @@
 <script>
     const socket = io();
 
-    // Manejar el envío de mensajes desde el formulario
     document.getElementById("chatForm").addEventListener("submit", (e) => {
         e.preventDefault();
         const user = document.getElementById("user").value;
@@ -62,7 +61,7 @@
         });
     });
 
-    // Escuchar mensajes del servidor y mostrarlos en la interfaz de usuario
+
     socket.on("messageReceived", (data) => {
         const { user, message } = data;
         const messageElement = document.createElement("div");
@@ -71,7 +70,7 @@
         document.getElementById("chatMessages").appendChild(messageElement);
     });
 
-    //Borrar mensajes
+
     document.getElementById("deleteButton").addEventListener("click", () => {
         socket.emit("deleteMessages");
 

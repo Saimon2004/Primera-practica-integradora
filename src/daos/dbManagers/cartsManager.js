@@ -2,7 +2,7 @@ import { cartsModel } from "../models/cartModel.js"
 
 class CartsDAO {
 
-    static async getAll() { //
+    static async getAll() {
         return cartsModel.find().lean()
     }
 
